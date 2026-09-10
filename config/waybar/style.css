@@ -85,3 +85,34 @@ tooltip {
     border-radius: 12px;
 }
 tooltip label { color: @text; padding: 8px; }
+
+/* MIDNIGHT LARGER WAYBAR BEGIN */
+/* 56px surface; keep the three floating sections and enlarge their contents. */
+* { font-size: 17px; }
+.modules-left, .modules-center, .modules-right {
+    border-radius: 18px;
+    padding-left: 7px;
+    padding-right: 7px;
+}
+.modules-center { padding-left: 14px; padding-right: 14px; }
+#custom-launcher { font-size: 26px; padding-left: 10px; padding-right: 14px; }
+#workspaces { padding-top: 5px; padding-bottom: 5px; }
+#workspaces button {
+    min-width: 16px;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-radius: 11px;
+}
+#clock { font-size: 17px; }
+#custom-system, #idle_inhibitor, #bluetooth, #network,
+#custom-notification, #custom-power { font-size: 21px; }
+#cpu, #memory { font-size: 14px; }
+#mpris, #custom-system, #cpu, #memory, #tray, #idle_inhibitor,
+#bluetooth, #pulseaudio, #network, #battery, #custom-notification, #custom-power {
+    padding-left: 11px;
+    padding-right: 11px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    border-radius: 11px;
+}
+/* MIDNIGHT LARGER WAYBAR END */

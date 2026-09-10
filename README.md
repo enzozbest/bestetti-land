@@ -1,22 +1,14 @@
-**MIDNIGHT GLASS — Enzo's Hyprland refresh · Lua edition**
+**MIDNIGHT GLASS — Enzo's Hyprland refresh**
 
 A coordinated dark desktop built from your supplied configuration: floating Waybar sections, lavender focus accents, Inter typography, restrained glass, a matching Wofi launcher, a SwayNC control centre and a quieter lock screen. The wallpaper script reuses `~/Pictures/Wallpapers/backdrop.png`; the interactive concept uses an illustrative background because the actual image was not attached.
 
 **Compatibility comes first**
 
-This edition targets **Hyprland 0.56 or newer**, using native Lua and the documented 0.56 API. Arch's package was 0.56.2-2 when checked on 10 September 2026. The installer checks your installed version and stops below 0.56 or if it cannot recognise the version. Future API changes may still require adjustments. [Arch package](https://archlinux.org/packages/extra/x86_64/hyprland/), [Hyprland 0.56 configuration](https://wiki.hypr.land/0.56.0/Configuring/Start/)
-
-The compositor entry point is now `hypr/hyprland.lua`, with separate Lua modules for hardware, appearance, motion, rules and bindings. **Hyprlock and Hypridle keep their own `.conf` format**; Waybar, Wofi and SwayNC keep their existing formats.
+This edition targets the **Hyprland 0.53 / 0.54 Hyprlang syntax** used by your uploaded configuration. Your installed version was not supplied. Hyprland 0.55 introduced Lua configuration, so the installer deliberately stops on newer or unrecognised versions and when `hyprland.lua` exists. Check your version after any Arch update; a Lua edition needs adapting before installation. [Hyprland configuration documentation](https://wiki.hypr.land/Configuring/Start/)
 
 The installer uses the standard `~/.config` location and expects regular files. If you manage dotfiles through symlinks or use a custom `XDG_CONFIG_HOME`, merge the files through that workflow. The font names are `Inter` and `JetBrainsMono Nerd Font`.
 
 **Get started**
-
-Upgrade Arch and Hyprland together:
-
-```bash
-sudo pacman -Syu hyprland
-```
 
 Extract the archive, open a terminal in the `midnight-glass` directory, and run:
 
@@ -41,34 +33,12 @@ After the checks pass, install as your desktop user:
 
 ```bash
 python3 install.py --apply
-```
-
-The installer makes a timestamped backup of affected live files and prints its path. It preserves an existing `hypr/local.lua`, detects the backlight device for SwayNC, and writes the main compositor config after its dependencies. Old compositor `.conf` files are retained, but the default config lookup in modern Hyprland prefers `hyprland.lua`. If `local.conf` contains active personal overrides and no `local.lua` exists, the check asks you to translate those overrides into `local.lua` first.
-
-**Log out and back in after installation** to start the upgraded compositor, load the Lua entry point and start the new session helpers. If your session command explicitly selects `hyprland.conf` with `--config`, change that path to `hyprland.lua` or remove the custom flag. Then run:
-
-```bash
 hyprctl configerrors
 ```
 
-Once the config has no errors, test `Super + L` and successfully unlock before relying on idle locking. A config reload alone does not replace a running compositor with the upgraded binary, rerun the session-start callback or restart Hypridle. Helpers already running through your session manager are respected. If a pre-existing Waybar service explicitly loads another configuration path, point it at `~/.config/waybar/config.jsonc` and `~/.config/waybar/style.css`. The printed rollback command is also usable from a text console if the graphical session cannot start.
+The installer makes a timestamped backup of affected live files and prints its path. It preserves an existing `hypr/local.conf`, detects the backlight device for SwayNC, and writes the main compositor config after its dependencies. Hyprland may automatically pick up the change. If `configerrors` reports an error, use the printed rollback command before logging out.
 
-**What the Lua migration changes**
-
-Most settings translate directly. Actions and lifecycle handling need explicit API changes:
-
-| Before | Lua edition |
-| --- | --- |
-| Category blocks such as `general { ... }` | Nested tables passed to `hl.config({ ... })` |
-| `source = ...` | `require("conf.appearance")` and other modules |
-| Repeated workspace bindings | A loop generates the same keys for workspaces 1–10 |
-| Dispatcher strings in bindings | `hl.bind(...)` with structured `hl.dsp` actions |
-| `exec-once` | `hl.on("hyprland.start", function() ... end)` |
-| Window and layer rules | `hl.window_rule(...)` and `hl.layer_rule(...)`, including vector sizes |
-| Runtime `hyprctl keyword` updates | `hyprctl eval 'hl.config(...)'` |
-| Legacy CLI dispatcher arguments | Native `hyprctl dispatch 'hl.dsp.…(...)'` expressions |
-
-Window selection, the special terminal, logout, focus mode and idle display power commands have been converted together with the main config. External programs still run asynchronously through exec actions. Mute keys now toggle once per press; holding them no longer repeatedly flips mute. The desktop's visual design and remaining shortcuts are carried over. [Lua dispatchers](https://wiki.hypr.land/0.56.0/Configuring/Basics/Dispatchers/), [hyprctl](https://wiki.hypr.land/Configuring/Advanced-and-Cool/Using-hyprctl/)
+Once the config has no errors, **log out and back in** to start the new session helpers. Then test `Super + L` and successfully unlock before relying on idle locking. A config reload alone does not rerun `exec-once` or restart Hypridle. Helpers already running through your session manager are respected. If a pre-existing Waybar service explicitly loads another configuration path, point it at `~/.config/waybar/config.jsonc` and `~/.config/waybar/style.css`.
 
 **What changed**
 
@@ -128,19 +98,19 @@ Deliberate remaps: Super + grave now summons a terminal instead of opening Wofi'
 
 **Tuning**
 
-Edit `~/.config/hypr/local.lua` for compositor overrides. Examples are already commented in that file. Hardware lives in `conf/hardware.lua`, styling in `conf/appearance.lua`, motion in `conf/animations.lua`, and shortcuts and matching rules have their own files. `conf/common.lua` contains the modifier, default applications and shared command helpers. The included Lua language-server settings point to Hyprland's installed stubs under `/usr/share/hypr/stubs` for editor completion.
+Edit `~/.config/hypr/local.conf` for compositor overrides. Examples are already commented in that file. Hardware lives in `conf/hardware.conf`, styling in `conf/appearance.conf`, motion in `conf/animations.conf`, and shortcuts and matching rules have their own files.
 
-For a denser display or different laptop, check `hyprctl monitors` and adapt `hardware.lua` before applying. The fallback monitor rule handles additional outputs at their preferred mode. The supplied explicit modes assume the monitors in your original file.
+For a denser display or different laptop, check `hyprctl monitors` and adapt `hardware.conf` before applying. The fallback monitor rule handles additional outputs at their preferred mode. The supplied explicit modes assume the monitors in your original file.
 
-To use another wallpaper, set this in `local.lua` and log in again:
+To use another wallpaper, set this in `local.conf` and log in again:
 
-```lua
-hl.env("MIDNIGHT_WALLPAPER", "/absolute/path/to/wallpaper.png")
+```ini
+env = MIDNIGHT_WALLPAPER,/absolute/path/to/wallpaper.png
 ```
 
 If no wallpaper file exists, the background falls back to solid midnight. Your wallpaper itself was not included in the uploads. Normal Kitty and IDE themes remain yours; only the dedicated drop-down terminal gets colour and opacity overrides. The example editor and browser content in the concept preview is illustrative.
 
-Text and image clipboard history are now captured at login to make your existing history shortcut useful. To disable capture, put `hl.env("MIDNIGHT_CLIPBOARD_HISTORY", "0")` in `local.lua` and log in again. Existing stored history remains until you clear it with `cliphist wipe`.
+Text and image clipboard history are now captured at login to make your existing history shortcut useful. To disable capture, put `env = MIDNIGHT_CLIPBOARD_HISTORY,0` in `local.conf` and log in again. Existing stored history remains until you clear it with `cliphist wipe`.
 
 **Rollback**
 
@@ -150,19 +120,17 @@ Use the exact backup directory printed by the installer:
 python3 install.py --restore /path/printed/by/the/installer
 ```
 
-This restores the original files and removes files newly introduced by that installation. It first saves any edits made since installation into an `after-*` directory inside the backup. Unrelated files are left alone. If this installation introduced `hyprland.lua`, rollback removes it and leaves the previous `.conf` entry point available. Restore an explicit session `--config` path yourself if you changed it. Log out and back in to restore the original session processes. Rollback restores configuration files; it does not downgrade Arch packages. Your uploaded originals are also included in `originals/`; `tiledSessionRestore.json` contained no windows or tile groups and is not installed or changed.
+This restores the original files and removes files newly introduced by that installation. It first saves any edits made since installation into an `after-*` directory inside the backup. Unrelated files are left alone. Log out and back in to restore the original session processes. Your uploaded originals are also included in `originals/`; `tiledSessionRestore.json` contained no windows or tile groups and is not installed or changed.
 
 **What was verified**
 
-Ten offline regression tests passed: cancellation of screenshots and shutdown, duplicate terminal launch suppression, focus-mode restoration with both previous DND states, handling untrusted window titles as data, install/restore round trips, rollback after a simulated installation failure, rejecting symlink-managed destinations before writing, migration that retains the old entry point and installs Lua last, and native Lua dimming commands. Run them with `python3 tests.py`.
+Eight offline regression tests passed: cancellation of screenshots and shutdown, duplicate terminal launch suppression, focus-mode restoration with both previous DND states, handling untrusted window titles as data, install/restore round trips, rollback after a simulated installation failure, and rejecting symlink-managed destinations before writing. Run them with `python3 tests.py`.
 
-All eight Lua files passed the Lua 5.4 parser. An offline stub of the documented `hl` API loaded the modules and checked 86 unique bindings, 11 unique window/layer rules, three monitor rules, ten animation entries, workspace mappings, callback behaviour and shell quoting. It also checked that loading the config does not start applications before the session-start event. This exercises Lua evaluation; it is not validation by the actual compositor.
-
-Python syntax, Bash syntax, JSON parsing, source-file references and named-colour references were checked. The unchanged stylesheets previously loaded successfully through the real GTK 3 CSS parser. Hyprland, Waybar, SwayNC and Hyprlock are not available in the build environment, so no live session, GPU timing, lock authentication, GTK rendering or hotplug test is claimed. The final spacing and hardware behaviour need checking on your monitors; the installer invokes your binary's config verifier when it is available.
+Python syntax, Bash syntax, JSON parsing, source-file references, rule-name and keybinding uniqueness, and named-colour references were checked. All three stylesheets also loaded successfully through the real GTK 3 CSS parser. This is not a substitute for rendering with the installed applications; GTK 4 was not available. Hyprland, Waybar, SwayNC and Hyprlock are not available in the build environment, so no live session, GPU timing, lock authentication, GTK rendering or hotplug test is claimed. The final spacing and hardware behaviour need checking on your monitors.
 
 **Why these fixes matter**
 
-The original notification backgrounds used roughly 0.3 alpha while `ignore_alpha` was 0.5; the latter excludes those pixels from blur. The new threshold is 0.05. Duplicate rule names were consolidated, broad dialog matches narrowed, and the old sample mouse device removed. [Hyprland window and layer rules](https://wiki.hypr.land/0.56.0/Configuring/Basics/Window-Rules/)
+The original notification backgrounds used roughly 0.3 alpha while `ignore_alpha` was 0.5; the latter excludes those pixels from blur. The new threshold is 0.05. Duplicate rule names were consolidated, broad dialog matches narrowed, and the old sample mouse device removed. [Hyprland window and layer rules](https://wiki.hypr.land/0.54.0/Configuring/Window-Rules/)
 
 The old SwayNC CSS included `color: @define-color (text)` and broad descendant resets that could override card styling. The replacement uses named colours correctly and targeted selectors. Its widget ID is `notifications`; `widget-notifications` is the CSS class, not the widget ID. [SwayNC configuration manual](https://github.com/ErikReider/SwayNotificationCenter/blob/main/man/swaync.5.scd)
 

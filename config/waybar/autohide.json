@@ -1,0 +1,8 @@
+{
+  "hide-delay": 1.2,
+  "reveal-delay": 0.15,
+  "edge-pixels": 3,
+  "bar-height": 56,
+  "margin-top": 8,
+  "poll-interval": 0.1
+}

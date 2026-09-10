@@ -1,17 +1,32 @@
 {
-  "layer": "top",
+  "layer": "overlay",
   "position": "top",
-  "height": 42,
+  "height": 56,
   "margin-top": 8,
   "margin-left": 12,
   "margin-right": 12,
   "spacing": 0,
   "fixed-center": true,
   "reload_style_on_change": true,
-  "modules-left": ["custom/launcher", "hyprland/workspaces", "hyprland/window"],
-  "modules-center": ["clock"],
-  "modules-right": ["mpris", "group/system", "idle_inhibitor", "bluetooth", "pulseaudio", "network", "battery", "custom/notification", "custom/power"],
-
+  "modules-left": [
+    "custom/launcher",
+    "hyprland/workspaces",
+    "hyprland/window"
+  ],
+  "modules-center": [
+    "clock"
+  ],
+  "modules-right": [
+    "mpris",
+    "group/system",
+    "idle_inhibitor",
+    "bluetooth",
+    "pulseaudio",
+    "network",
+    "battery",
+    "custom/notification",
+    "custom/power"
+  ],
   "custom/launcher": {
     "format": "󰣇",
     "tooltip-format": "Applications · Super + Space\nRight click: shortcuts",
@@ -25,7 +40,9 @@
     "all-outputs": false,
     "active-only": false,
     "show-special": false,
-    "persistent-workspaces": {"*": 5}
+    "persistent-workspaces": {
+      "*": 5
+    }
   },
   "hyprland/window": {
     "format": "{class}",
@@ -70,8 +87,17 @@
   },
   "group/system": {
     "orientation": "inherit",
-    "drawer": {"transition-duration": 200, "children-class": "system-drawer", "transition-left-to-right": false},
-    "modules": ["custom/system", "cpu", "memory", "tray"]
+    "drawer": {
+      "transition-duration": 200,
+      "children-class": "system-drawer",
+      "transition-left-to-right": false
+    },
+    "modules": [
+      "custom/system",
+      "cpu",
+      "memory",
+      "tray"
+    ]
   },
   "custom/system": {
     "format": "󰍛",
@@ -90,10 +116,16 @@
     "tooltip-format": "{used:0.1f} / {total:0.1f} GiB",
     "on-click": "~/.config/hypr/scripts/midnight.py tools"
   },
-  "tray": {"icon-size": 16, "spacing": 10},
+  "tray": {
+    "icon-size": 22,
+    "spacing": 10
+  },
   "idle_inhibitor": {
     "format": "{icon}",
-    "format-icons": {"activated": "󰅶", "deactivated": "󰾪"},
+    "format-icons": {
+      "activated": "󰅶",
+      "deactivated": "󰾪"
+    },
     "tooltip-format-activated": "Keep awake is on · click to release",
     "tooltip-format-deactivated": "Keep awake is off · click to inhibit idle"
   },
@@ -109,7 +141,15 @@
   "pulseaudio": {
     "format": "{icon} {volume}%",
     "format-muted": "󰝟",
-    "format-icons": {"headphone": "󰋋", "headset": "󰋎", "default": ["󰕿", "󰖀", "󰕾"]},
+    "format-icons": {
+      "headphone": "󰋋",
+      "headset": "󰋎",
+      "default": [
+        "󰕿",
+        "󰖀",
+        "󰕾"
+      ]
+    },
     "tooltip-format": "{desc}\nClick: mute · right click: mixer",
     "on-click": "~/.config/hypr/scripts/midnight.py volume mute",
     "on-click-right": "~/.config/hypr/scripts/midnight.py audio",
@@ -126,9 +166,20 @@
     "on-click": "kitty --class midnight-tools -e nmtui"
   },
   "battery": {
-    "states": {"warning": 25, "critical": 10},
+    "states": {
+      "warning": 25,
+      "critical": 10
+    },
     "format": "{icon} {capacity}%",
-    "format-icons": ["󰂎", "󰁺", "󰁼", "󰁾", "󰂀", "󰂂", "󰁹"],
+    "format-icons": [
+      "󰂎",
+      "󰁺",
+      "󰁼",
+      "󰁾",
+      "󰂀",
+      "󰂂",
+      "󰁹"
+    ],
     "format-charging": "󰂄 {capacity}%",
     "format-full": "󰁹 100%",
     "tooltip-format": "{timeTo}\n{power:.1f} W"
@@ -136,9 +187,14 @@
   "custom/notification": {
     "format": "{icon}",
     "format-icons": {
-      "notification": "󱅫", "none": "󰂚", "dnd-notification": "󰂛", "dnd-none": "󰂛",
-      "inhibited-notification": "󰂛", "inhibited-none": "󰂛",
-      "dnd-inhibited-notification": "󰂛", "dnd-inhibited-none": "󰂛"
+      "notification": "󱅫",
+      "none": "󰂚",
+      "dnd-notification": "󰂛",
+      "dnd-none": "󰂛",
+      "inhibited-notification": "󰂛",
+      "inhibited-none": "󰂛",
+      "dnd-inhibited-notification": "󰂛",
+      "dnd-inhibited-none": "󰂛"
     },
     "return-type": "json",
     "exec": "swaync-client -swb",
@@ -153,5 +209,10 @@
     "tooltip-format": "Session menu · right click: lock",
     "on-click": "~/.config/hypr/scripts/midnight.py power",
     "on-click-right": "~/.config/hypr/scripts/midnight.py lock"
-  }
+  },
+  "exclusive": false,
+  "passthrough": false,
+  "start_hidden": false,
+  "on-sigusr1": "show",
+  "on-sigusr2": "hide"
 }

@@ -6,6 +6,7 @@ require("conf.appearance")
 require("conf.animations")
 require("conf.rules")
 require("conf.bindings")
+require("conf.waybar")
 
 -- Registered again on config reload; executed only when the session starts.
 local common = require("conf.common")

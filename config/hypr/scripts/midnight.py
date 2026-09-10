@@ -270,8 +270,12 @@ def reload_config():
         raise RuntimeError(errors)
     run("swaync-client", "-R", check=False)
     run("swaync-client", "-rs", check=False)
-    # SIGUSR2 reloads Waybar config/style. No global kill-and-relaunch.
-    run("pkill", "-USR2", "-u", str(os.getuid()), "-x", "waybar", check=False)
+    # Auto-hide uses explicit show/hide signals, so its helper handles reloads.
+    bar_control = Path(__file__).with_name("waybar-control.py")
+    if bar_control.exists():
+        run(sys.executable, str(bar_control), "reload")
+    else:
+        run("pkill", "-USR2", "-u", str(os.getuid()), "-x", "waybar", check=False)
     notify("Desktop reloaded")
 
 
@@ -307,6 +311,8 @@ def help_menu():
         "Super + Shift + Space         Search open windows",
         "Super + `                     Drop-down terminal",
         "Super + N                     Control centre",
+        "Super + B                     Pin/unpin Waybar",
+        "Super + Shift + B             Show Waybar briefly",
         "Super + Shift + N             Do Not Disturb",
         "Super + Shift + V             Clipboard history",
         "Super + G                     Focus mode",
