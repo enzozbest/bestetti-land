@@ -11,13 +11,13 @@
   "modules-left": [
     "custom/launcher",
     "hyprland/workspaces",
-    "hyprland/window"
+    "hyprland/window",
+    "mpris"
   ],
   "modules-center": [
     "clock"
   ],
   "modules-right": [
-    "mpris",
     "group/system",
     "idle_inhibitor",
     "bluetooth",
@@ -45,20 +45,12 @@
     }
   },
   "hyprland/window": {
-    "format": "{class}",
-    "max-length": 22,
+    "format": "{title}",
+    "max-length": 30,
     "separate-outputs": true,
-    "rewrite": {
-      "firefox.*": "Firefox",
-      "org.mozilla.firefox": "Firefox",
-      "jetbrains-idea": "IntelliJ IDEA",
-      "dev.zed.Zed": "Zed",
-      "kitty": "Terminal",
-      "midnight-terminal": "Terminal",
-      "thunar": "Files",
-      "Thunar": "Files"
-    },
-    "on-click": "~/.config/hypr/scripts/midnight.py windows"
+    "on-click": "~/.config/hypr/scripts/midnight.py windows",
+    "icon": true,
+    "icon-size": 18
   },
   "clock": {
     "format": "{:%a %d %b  ·  %H:%M}",
@@ -75,23 +67,27 @@
     }
   },
   "mpris": {
-    "format": "󰎈  {title}",
-    "format-paused": "󰏤  {title}",
+    "format": "󰎈  {dynamic}",
+    "format-paused": "󰏤  {dynamic}",
     "format-stopped": "",
-    "max-length": 22,
+    "max-length": 28,
     "tooltip-format": "{title}\n{artist}\n{album}",
     "on-click": "playerctl play-pause",
     "on-click-right": "playerctl next",
     "on-scroll-up": "playerctl next",
-    "on-scroll-down": "playerctl previous"
+    "on-scroll-down": "playerctl previous",
+    "format-playing": "󰎈  {dynamic}",
+    "dynamic-order": [
+      "title",
+      "artist"
+    ],
+    "dynamic-separator": " · ",
+    "title-len": 22,
+    "artist-len": 14,
+    "dynamic-len": 26
   },
   "group/system": {
     "orientation": "inherit",
-    "drawer": {
-      "transition-duration": 200,
-      "children-class": "system-drawer",
-      "transition-left-to-right": false
-    },
     "modules": [
       "custom/system",
       "cpu",
@@ -101,7 +97,7 @@
   },
   "custom/system": {
     "format": "󰍛",
-    "tooltip-format": "Hover: CPU, RAM and tray\nClick: system tools",
+    "tooltip-format": "System tools · CPU, RAM and tray",
     "on-click": "~/.config/hypr/scripts/midnight.py tools"
   },
   "cpu": {
@@ -157,13 +153,14 @@
     "on-scroll-down": "~/.config/hypr/scripts/midnight.py volume down"
   },
   "network": {
-    "format-wifi": "󰖩",
-    "format-ethernet": "󰈀",
-    "format-disconnected": "󰖪",
+    "format-wifi": "󰖩  {essid}",
+    "format-ethernet": "󰈀  Wired",
+    "format-disconnected": "󰖪  Offline",
     "tooltip-format-wifi": "{essid} · {signalStrength}%\n{ipaddr}\n↑ {bandwidthUpBits}  ↓ {bandwidthDownBits}",
     "tooltip-format-ethernet": "Wired · {ipaddr}\n↑ {bandwidthUpBits}  ↓ {bandwidthDownBits}",
     "tooltip-format-disconnected": "Disconnected",
-    "on-click": "kitty --class midnight-tools -e nmtui"
+    "on-click": "kitty --class midnight-tools -e nmtui",
+    "max-length": 16
   },
   "battery": {
     "states": {
