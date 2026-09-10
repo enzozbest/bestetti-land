@@ -6,7 +6,7 @@
   "control-center-layer": "overlay",
   "control-center-exclusive-zone": false,
   "layer-shell": true,
-  "cssPriority": "application",
+  "cssPriority": "user",
   "notification-window-width": 390,
   "control-center-width": 410,
   "control-center-margin-top": 62,
@@ -19,27 +19,64 @@
   "timeout-low": 3,
   "timeout-critical": 0,
   "fit-to-screen": false,
-  "control-center-height": 760,
+  "control-center-height": -1,
   "keyboard-shortcuts": true,
   "image-visibility": "when-available",
   "transition-time": 180,
   "hide-on-clear": false,
   "hide-on-action": true,
-  "widgets": ["title", "dnd", "buttons-grid", "mpris", "volume", "backlight", "notifications"],
+  "widgets": [
+    "title",
+    "dnd",
+    "buttons-grid",
+    "mpris",
+    "volume",
+    "backlight",
+    "notifications"
+  ],
   "widget-config": {
-    "title": {"text": "Control centre", "clear-all-button": true, "button-text": "Clear"},
-    "dnd": {"text": "Do Not Disturb"},
+    "title": {
+      "text": "Control centre",
+      "clear-all-button": true,
+      "button-text": "Clear"
+    },
+    "dnd": {
+      "text": "Do Not Disturb"
+    },
     "buttons-grid": {
       "buttons-per-row": 2,
       "actions": [
-        {"label": "󰖩  Network", "command": "kitty --class midnight-tools -e nmtui"},
-        {"label": "󰂯  Bluetooth", "command": "blueman-manager"},
-        {"label": "󰕾  Audio", "command": "~/.config/hypr/scripts/midnight.py audio"},
-        {"label": "󰌾  Lock", "command": "~/.config/hypr/scripts/midnight.py lock"}
+        {
+          "label": "󰖩  Network",
+          "command": "kitty --class midnight-tools -e nmtui"
+        },
+        {
+          "label": "󰂯  Bluetooth",
+          "command": "blueman-manager"
+        },
+        {
+          "label": "󰕾  Audio",
+          "command": "~/.config/hypr/scripts/midnight.py audio"
+        },
+        {
+          "label": "󰌾  Lock",
+          "command": "~/.config/hypr/scripts/midnight.py lock"
+        }
       ]
     },
-    "mpris": {},
-    "volume": {"label": "󰕾"},
-    "backlight": {"label": "󰃟"}
-  }
+    "mpris": {
+      "autohide": true
+    },
+    "volume": {
+      "label": "󰕾"
+    },
+    "backlight": {
+      "label": "󰃟"
+    },
+    "notifications": {
+      "vexpand": false
+    }
+  },
+  "ignore-gtk-theme": true,
+  "text-empty": "No notifications"
 }

@@ -108,3 +108,117 @@ scale highlight { background: @accent; border-radius: 8px; }
 scale slider { background: #cdd6f4; border-radius: 50%; min-width: 12px; min-height: 12px; box-shadow: none; }
 .widget-notifications { margin-top: 6px; }
 .notification-group-header { font-weight: 600; }
+
+/* MIDNIGHT SWAYNC SURFACE FIX BEGIN */
+/* SwayNC has custom GTK 4 window nodes as well as legacy style classes.
+   Reset only its window surfaces; cards below keep their own backgrounds. */
+window,
+window.background,
+blankwindow,
+blankwindow.background,
+notificationwindow,
+notificationwindow.background,
+.blank-window,
+.notification-window,
+.floating-notifications {
+    background: transparent;
+    background-image: none;
+    border: none;
+    box-shadow: none;
+}
+
+.control-center {
+    background: rgba(17, 17, 27, 0.90);
+    background-image: none;
+    color: @text;
+    border: 1px solid rgba(180, 190, 254, 0.20);
+    border-radius: 22px;
+}
+.control-center .control-center-list {
+    background: transparent;
+    background-image: none;
+}
+.control-center .control-center-list-placeholder {
+    background: transparent;
+    color: @muted;
+    opacity: 0.75;
+    padding: 14px 0;
+}
+.control-center .control-center-list-placeholder label {
+    color: @muted;
+    font-size: 14px;
+}
+
+/* Descendant selectors also cover the GTK 4 widget wrappers. */
+.control-center .widget-buttons-grid button,
+.control-center .widget-buttons button {
+    background: rgba(49, 50, 68, 0.65);
+    background-image: none;
+    color: @text;
+    border: 1px solid rgba(180, 190, 254, 0.14);
+    border-radius: 12px;
+    min-height: 24px;
+    padding: 10px 8px;
+    margin: 3px;
+    box-shadow: none;
+    text-shadow: none;
+}
+.control-center .widget-buttons-grid button:hover,
+.control-center .widget-buttons button:hover {
+    background: rgba(180, 190, 254, 0.17);
+    border-color: rgba(180, 190, 254, 0.30);
+}
+
+.control-center scale trough {
+    background: #45475a;
+    background-image: none;
+    border: none;
+    border-radius: 8px;
+    min-height: 6px;
+    box-shadow: none;
+}
+.control-center scale trough highlight {
+    background: @accent;
+    background-image: none;
+    border: none;
+    border-radius: 8px;
+    box-shadow: none;
+}
+.control-center scale slider {
+    background: #cdd6f4;
+    background-image: none;
+    border: 2px solid @accent;
+    border-radius: 50%;
+    min-width: 12px;
+    min-height: 12px;
+    box-shadow: none;
+}
+
+.control-center .widget-mpris .widget-mpris-player {
+    margin: 0;
+    padding: 0;
+    background: rgba(49, 50, 68, 0.45);
+    border: 1px solid rgba(180, 190, 254, 0.10);
+    border-radius: 14px;
+    box-shadow: none;
+}
+.control-center .widget-mpris .mpris-overlay {
+    padding: 12px;
+    background: rgba(17, 17, 27, 0.40);
+    border-radius: 14px;
+}
+.control-center .widget-mpris .widget-mpris-album-art {
+    box-shadow: none;
+}
+.control-center .widget-mpris button {
+    background: transparent;
+    background-image: none;
+    box-shadow: none;
+    border: none;
+    border-radius: 9px;
+    padding: 7px;
+}
+.control-center .widget-mpris button:hover {
+    background: rgba(180, 190, 254, 0.15);
+}
+/* MIDNIGHT SWAYNC SURFACE FIX END */
