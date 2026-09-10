@@ -116,3 +116,28 @@ tooltip label { color: @text; padding: 8px; }
     border-radius: 11px;
 }
 /* MIDNIGHT LARGER WAYBAR END */
+
+/* MIDNIGHT WAYBAR PANEL BEGIN */
+/* One opaque surface conceals application tabs between the module groups. */
+window#waybar {
+    background: #11111b;
+    background-image: none;
+    color: @text;
+    border: 1px solid rgba(180, 190, 254, 0.18);
+    border-radius: 16px;
+    box-shadow: none;
+}
+window#waybar > box { background: transparent; }
+window#waybar .modules-left,
+window#waybar .modules-center,
+window#waybar .modules-right {
+    background: transparent;
+    background-image: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
+    padding: 0 10px;
+}
+window#waybar .modules-center { padding: 0 14px; }
+/* MIDNIGHT WAYBAR PANEL END */
