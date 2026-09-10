@@ -1,0 +1,110 @@
+/* Midnight Glass · GTK CSS. Target cards, not every descendant of a window. */
+@define-color text #cdd6f4;
+@define-color muted #a6adc8;
+@define-color accent #b4befe;
+@define-color red #f38ba8;
+
+* {
+    font-family: "Inter", "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: @text;
+}
+
+.notification-window, .blank-window {
+    background: transparent;
+}
+.notification-row { outline: none; }
+.notification-background { background: transparent; padding: 6px 12px; }
+.notification {
+    background: rgba(24, 24, 37, 0.88);
+    border: 1px solid rgba(180, 190, 254, 0.22);
+    border-radius: 16px;
+    padding: 0;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.22);
+}
+.notification.critical { border-color: @red; }
+.notification-default-action { padding: 14px; border-radius: 16px; background: transparent; }
+.notification-default-action:hover { background: rgba(180, 190, 254, 0.06); }
+.summary { color: @text; font-size: 14px; font-weight: 600; }
+.body { color: @muted; font-size: 13px; }
+.time { color: @muted; font-size: 11px; }
+.notification-action {
+    color: @accent;
+    padding: 8px 12px;
+    background: rgba(180, 190, 254, 0.08);
+    border-top: 1px solid rgba(180, 190, 254, 0.12);
+}
+.notification-action:hover { background: rgba(180, 190, 254, 0.16); }
+.close-button {
+    background: #313244;
+    color: @muted;
+    border: none;
+    border-radius: 50%;
+    box-shadow: none;
+}
+.close-button:hover { background: @red; color: #11111b; }
+
+.control-center {
+    background: rgba(17, 17, 27, 0.90);
+    border: 1px solid rgba(180, 190, 254, 0.20);
+    border-radius: 22px;
+    padding: 16px;
+}
+.control-center .notification-background { padding: 5px 0; }
+.control-center .notification {
+    background: rgba(49, 50, 68, 0.55);
+    border-color: rgba(180, 190, 254, 0.10);
+    box-shadow: none;
+}
+.widget-title { margin: 4px 2px 14px; }
+.widget-title > label { font-size: 21px; font-weight: 600; }
+.widget-title > button {
+    background: #313244;
+    color: @muted;
+    border: none;
+    border-radius: 9px;
+    padding: 7px 12px;
+    box-shadow: none;
+}
+.widget-title > button:hover { color: @text; background: #45475a; }
+.widget-dnd {
+    margin: 0 0 12px;
+    padding: 12px;
+    background: rgba(49, 50, 68, 0.50);
+    border-radius: 13px;
+}
+.widget-dnd > switch { border-radius: 20px; background: #45475a; border: none; }
+.widget-dnd > switch:checked { background: @accent; }
+.widget-dnd > switch slider { border-radius: 20px; background: #cdd6f4; box-shadow: none; }
+.widget-dnd > switch:checked slider { background: #11111b; }
+.widget-buttons-grid, .widget-buttons { margin: 0 0 12px; }
+.widget-buttons-grid > flowbox > flowboxchild > button,
+.widget-buttons > flowbox > flowboxchild > button {
+    background: rgba(49, 50, 68, 0.65);
+    border: 1px solid rgba(180, 190, 254, 0.10);
+    border-radius: 12px;
+    padding: 12px 8px;
+    margin: 3px;
+    box-shadow: none;
+}
+.widget-buttons-grid > flowbox > flowboxchild > button:hover,
+.widget-buttons > flowbox > flowboxchild > button:hover {
+    background: rgba(180, 190, 254, 0.17);
+    border-color: rgba(180, 190, 254, 0.30);
+}
+.widget-mpris { margin: 0 0 10px; }
+.widget-mpris-player { border-radius: 14px; padding: 12px; }
+.widget-mpris-title { font-weight: 600; }
+.widget-mpris-subtitle { font-size: 12px; }
+.widget-volume, .widget-backlight {
+    margin: 0 0 10px;
+    padding: 8px 12px;
+    background: rgba(49, 50, 68, 0.45);
+    border-radius: 13px;
+}
+scale trough { background: #45475a; border-radius: 8px; min-height: 6px; }
+scale highlight { background: @accent; border-radius: 8px; }
+scale slider { background: #cdd6f4; border-radius: 50%; min-width: 12px; min-height: 12px; box-shadow: none; }
+.widget-notifications { margin-top: 6px; }
+.notification-group-header { font-weight: 600; }

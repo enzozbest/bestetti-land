@@ -1,0 +1,8 @@
+-- Personal overrides, loaded last. Preserved by subsequent installations.
+-- Examples:
+-- hl.config({ decoration = { blur = { enabled = false }, rounding = 10 } })
+-- hl.config({ animations = { enabled = false } })
+-- hl.config({ input = { follow_mouse = 0 } })
+-- hl.monitor({ output = "eDP-1", mode = "2560x1600@240", position = "0x0", scale = 1.25 })
+-- hl.env("MIDNIGHT_CLIPBOARD_HISTORY", "0")
+-- hl.env("MIDNIGHT_WALLPAPER", "/absolute/path/to/wallpaper.png")

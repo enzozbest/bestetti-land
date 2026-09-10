@@ -1,0 +1,87 @@
+/* GTK CSS, not browser CSS. Each section has room for its own shadow. */
+@define-color text #cdd6f4;
+@define-color muted #a6adc8;
+@define-color accent #b4befe;
+@define-color ice #89b4fa;
+@define-color green #a6e3a1;
+@define-color yellow #f9e2af;
+@define-color red #f38ba8;
+
+* {
+    font-family: "Inter", "JetBrainsMono Nerd Font", "Symbols Nerd Font Mono", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    min-height: 0;
+    border: none;
+}
+window#waybar { background: transparent; color: @text; }
+button { background: transparent; box-shadow: none; text-shadow: none; }
+button:hover { box-shadow: none; text-shadow: none; }
+.modules-left, .modules-center, .modules-right {
+    background: rgba(17, 17, 27, 0.80);
+    border: 1px solid rgba(180, 190, 254, 0.14);
+    border-radius: 15px;
+    padding: 0 5px;
+    margin: 0 2px 5px 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.22);
+}
+.modules-center { padding: 0 12px; }
+#custom-launcher {
+    font-family: "JetBrainsMono Nerd Font";
+    color: @accent;
+    font-size: 20px;
+    padding: 0 12px 0 8px;
+}
+#workspaces { padding: 3px 2px; }
+#workspaces button {
+    padding: 0 10px;
+    margin: 1px 2px;
+    min-width: 10px;
+    border-radius: 9px;
+    color: @muted;
+    transition: background-color 160ms ease, color 160ms ease;
+}
+#workspaces button.empty { color: #6c7086; }
+#workspaces button.active {
+    color: #11111b;
+    background: @accent;
+    font-weight: 700;
+}
+#workspaces button.urgent { background: @red; color: #11111b; }
+#workspaces button:hover { background: rgba(180, 190, 254, 0.20); color: @text; }
+#window { padding: 0 12px; color: @muted; }
+window#waybar.empty #window { padding: 0; }
+#clock { color: @text; font-weight: 600; padding: 0 7px; }
+#mpris, #custom-system, #cpu, #memory, #tray, #idle_inhibitor,
+#bluetooth, #pulseaudio, #network, #battery, #custom-notification, #custom-power {
+    padding: 0 9px;
+    margin: 4px 1px;
+    border-radius: 9px;
+    color: @text;
+    transition: background-color 160ms ease;
+}
+#mpris { color: @muted; padding-right: 14px; }
+#mpris.paused { color: #7f849c; }
+#cpu, #memory { color: @muted; font-family: "JetBrainsMono Nerd Font"; font-size: 11px; }
+#custom-system { color: @muted; }
+#idle_inhibitor { color: #7f849c; }
+#idle_inhibitor.activated { color: @yellow; background: rgba(249, 226, 175, 0.10); }
+#bluetooth.connected { color: @ice; }
+#bluetooth.disabled, #network.disconnected, #pulseaudio.muted { color: #7f849c; }
+#battery.charging, #battery.plugged { color: @green; }
+#battery.warning:not(.charging) { color: @yellow; }
+#battery.critical:not(.charging) { color: @red; background: rgba(243, 139, 168, 0.12); }
+#custom-notification { color: @accent; }
+#custom-power { color: @muted; padding: 0 11px; }
+#mpris:hover, #custom-launcher:hover, #clock:hover, #custom-system:hover,
+#idle_inhibitor:hover, #bluetooth:hover, #pulseaudio:hover, #network:hover,
+#battery:hover, #custom-notification:hover, #custom-power:hover, #window:hover {
+    background: rgba(180, 190, 254, 0.10);
+}
+#custom-power:hover { color: @red; }
+tooltip {
+    background: #181825;
+    border: 1px solid #45475a;
+    border-radius: 12px;
+}
+tooltip label { color: @text; padding: 8px; }

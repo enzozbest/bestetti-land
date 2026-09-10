@@ -1,0 +1,126 @@
+/* SwayNC 0.12.x — kill the popup slab, keep glass cards */
+
+@define-color text    #cdd6f4;
+@define-color subtext #bac2de;
+
+* {
+    font-family: "JetBrainsMono NF";
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   POPUP NOTIFICATIONS (namespace: swaync-notification-window)
+   The “bare rectangle” is the window/container, not the card.
+   So we force every container to be transparent.
+   ───────────────────────────────────────────────────────────── */
+
+.notification-window,
+.notification-window *,
+.notification-window box,
+.notification-window overlay,
+.notification-window scrolledwindow,
+.notification-window viewport,
+.notification-window list,
+.notification-window row {
+    background-image: none;
+    background: transparent;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+/* The stack spacing */
+.notification-row {
+    margin: 10px 14px 0 0;
+    padding: 0;
+}
+
+/* Actual card */
+.notification {
+    background: rgba(24, 24, 37, 0.3);
+    border-radius: 16px;
+    padding: 12px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+
+    /* thin Apple-ish accent */
+    background-image: linear-gradient(
+        90deg,
+        rgba(203, 166, 247, 0.3),
+        rgba(137, 180, 250, 0.3)
+    );
+    background-repeat: no-repeat;
+    background-size: 100% 3px;
+    background-position: top;
+}
+
+.notification-title {
+    color: @text;
+    font-weight: 800;
+}
+.notification-body {
+    color: @subtext;
+}
+
+/* Buttons */
+.notification-action {
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: @define-color (text);
+    padding: 8px 10px;
+    margin-top: 10px;
+}
+.notification-action:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CONTROL CENTER (namespace: swaync-control-center)
+   Keep it classy; geometry comes from config.json.
+   ───────────────────────────────────────────────────────────── */
+
+.control-center {
+    background: rgba(17, 17, 27, 0.28);
+    border-radius: 22px;
+    padding: 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 18px 55px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+
+    background-image: linear-gradient(
+        90deg,
+        rgba(137, 180, 250, 0.3),
+        rgba(203, 166, 247, 0.3)
+    );
+    background-repeat: no-repeat;
+    background-size: 100% 4px;
+    background-position: top;
+}
+
+.widget-notifications {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 10px;
+}
+
+.dnd {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 10px 12px;
+    margin: 6px 0 12px 0;
+}
+
+window#swaync-notification-window,
+window#swaync-notification-window * {
+    background-color: transparent;
+    background: transparent;
+}

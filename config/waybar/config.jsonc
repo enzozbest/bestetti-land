@@ -1,0 +1,157 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 42,
+  "margin-top": 8,
+  "margin-left": 12,
+  "margin-right": 12,
+  "spacing": 0,
+  "fixed-center": true,
+  "reload_style_on_change": true,
+  "modules-left": ["custom/launcher", "hyprland/workspaces", "hyprland/window"],
+  "modules-center": ["clock"],
+  "modules-right": ["mpris", "group/system", "idle_inhibitor", "bluetooth", "pulseaudio", "network", "battery", "custom/notification", "custom/power"],
+
+  "custom/launcher": {
+    "format": "󰣇",
+    "tooltip-format": "Applications · Super + Space\nRight click: shortcuts",
+    "on-click": "~/.config/hypr/scripts/midnight.py launcher",
+    "on-click-right": "~/.config/hypr/scripts/midnight.py help"
+  },
+  "hyprland/workspaces": {
+    "format": "{name}",
+    "on-click": "activate",
+    "sort-by-number": true,
+    "all-outputs": false,
+    "active-only": false,
+    "show-special": false,
+    "persistent-workspaces": {"*": 5}
+  },
+  "hyprland/window": {
+    "format": "{class}",
+    "max-length": 22,
+    "separate-outputs": true,
+    "rewrite": {
+      "firefox.*": "Firefox",
+      "org.mozilla.firefox": "Firefox",
+      "jetbrains-idea": "IntelliJ IDEA",
+      "dev.zed.Zed": "Zed",
+      "kitty": "Terminal",
+      "midnight-terminal": "Terminal",
+      "thunar": "Files",
+      "Thunar": "Files"
+    },
+    "on-click": "~/.config/hypr/scripts/midnight.py windows"
+  },
+  "clock": {
+    "format": "{:%a %d %b  ·  %H:%M}",
+    "format-alt": "{:%d / %m / %Y  ·  %H:%M:%S}",
+    "interval": 1,
+    "tooltip-format": "<tt>{calendar}</tt>",
+    "calendar": {
+      "mode": "month",
+      "weeks-pos": "left",
+      "format": {
+        "today": "<span color='#b4befe'><b>{}</b></span>",
+        "weekdays": "<span color='#94e2d5'>{}</span>"
+      }
+    }
+  },
+  "mpris": {
+    "format": "󰎈  {title}",
+    "format-paused": "󰏤  {title}",
+    "format-stopped": "",
+    "max-length": 22,
+    "tooltip-format": "{title}\n{artist}\n{album}",
+    "on-click": "playerctl play-pause",
+    "on-click-right": "playerctl next",
+    "on-scroll-up": "playerctl next",
+    "on-scroll-down": "playerctl previous"
+  },
+  "group/system": {
+    "orientation": "inherit",
+    "drawer": {"transition-duration": 200, "children-class": "system-drawer", "transition-left-to-right": false},
+    "modules": ["custom/system", "cpu", "memory", "tray"]
+  },
+  "custom/system": {
+    "format": "󰍛",
+    "tooltip-format": "Hover: CPU, RAM and tray\nClick: system tools",
+    "on-click": "~/.config/hypr/scripts/midnight.py tools"
+  },
+  "cpu": {
+    "interval": 5,
+    "format": "CPU {usage}%",
+    "tooltip-format": "{usage}% CPU usage",
+    "on-click": "~/.config/hypr/scripts/midnight.py tools"
+  },
+  "memory": {
+    "interval": 10,
+    "format": "RAM {percentage}%",
+    "tooltip-format": "{used:0.1f} / {total:0.1f} GiB",
+    "on-click": "~/.config/hypr/scripts/midnight.py tools"
+  },
+  "tray": {"icon-size": 16, "spacing": 10},
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {"activated": "󰅶", "deactivated": "󰾪"},
+    "tooltip-format-activated": "Keep awake is on · click to release",
+    "tooltip-format-deactivated": "Keep awake is off · click to inhibit idle"
+  },
+  "bluetooth": {
+    "format": "󰂯",
+    "format-disabled": "󰂲",
+    "format-connected": "󰂱",
+    "tooltip-format": "Bluetooth · {status}",
+    "tooltip-format-connected": "{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}",
+    "on-click": "blueman-manager"
+  },
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": "󰝟",
+    "format-icons": {"headphone": "󰋋", "headset": "󰋎", "default": ["󰕿", "󰖀", "󰕾"]},
+    "tooltip-format": "{desc}\nClick: mute · right click: mixer",
+    "on-click": "~/.config/hypr/scripts/midnight.py volume mute",
+    "on-click-right": "~/.config/hypr/scripts/midnight.py audio",
+    "on-scroll-up": "~/.config/hypr/scripts/midnight.py volume up",
+    "on-scroll-down": "~/.config/hypr/scripts/midnight.py volume down"
+  },
+  "network": {
+    "format-wifi": "󰖩",
+    "format-ethernet": "󰈀",
+    "format-disconnected": "󰖪",
+    "tooltip-format-wifi": "{essid} · {signalStrength}%\n{ipaddr}\n↑ {bandwidthUpBits}  ↓ {bandwidthDownBits}",
+    "tooltip-format-ethernet": "Wired · {ipaddr}\n↑ {bandwidthUpBits}  ↓ {bandwidthDownBits}",
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "kitty --class midnight-tools -e nmtui"
+  },
+  "battery": {
+    "states": {"warning": 25, "critical": 10},
+    "format": "{icon} {capacity}%",
+    "format-icons": ["󰂎", "󰁺", "󰁼", "󰁾", "󰂀", "󰂂", "󰁹"],
+    "format-charging": "󰂄 {capacity}%",
+    "format-full": "󰁹 100%",
+    "tooltip-format": "{timeTo}\n{power:.1f} W"
+  },
+  "custom/notification": {
+    "format": "{icon}",
+    "format-icons": {
+      "notification": "󱅫", "none": "󰂚", "dnd-notification": "󰂛", "dnd-none": "󰂛",
+      "inhibited-notification": "󰂛", "inhibited-none": "󰂛",
+      "dnd-inhibited-notification": "󰂛", "dnd-inhibited-none": "󰂛"
+    },
+    "return-type": "json",
+    "exec": "swaync-client -swb",
+    "restart-interval": 2,
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "escape": true,
+    "tooltip": true
+  },
+  "custom/power": {
+    "format": "󰐥",
+    "tooltip-format": "Session menu · right click: lock",
+    "on-click": "~/.config/hypr/scripts/midnight.py power",
+    "on-click-right": "~/.config/hypr/scripts/midnight.py lock"
+  }
+}

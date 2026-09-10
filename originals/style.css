@@ -1,0 +1,412 @@
+@define-color base #1e1e2e;
+@define-color mantle #181825;
+@define-color crust #11111b;
+
+@define-color text #cdd6f4;
+@define-color subtext0 #a6adc8;
+@define-color subtext1 #bac2de;
+
+@define-color surface0 #313244;
+@define-color surface1 #45475a;
+@define-color surface2 #585b70;
+
+@define-color overlay0 #6c7086;
+@define-color overlay1 #7f849c;
+@define-color overlay2 #9399b2;
+
+@define-color blue #89b4fa;
+@define-color lavender #b4befe;
+@define-color sapphire #74c7ec;
+@define-color sky #89dceb;
+@define-color teal #94e2d5;
+@define-color green #a6e3a1;
+@define-color yellow #f9e2af;
+@define-color peach #fab387;
+@define-color maroon #eba0ac;
+@define-color red #f38ba8;
+@define-color mauve #cba6f7;
+@define-color pink #f5c2e7;
+@define-color flamingo #f2cdcd;
+@define-color rosewater #f5e0dc;
+
+* {
+    font-family: "JetBrainsMono NF", "Symbols Nerd Font";
+    font-weight: bold;
+    font-size: 14px;
+    min-height: 0;
+}
+
+window#waybar {
+    background-color: transparent;
+    color: @sapphire;
+    transition-property: background-color;
+    transition-duration: 0.5s;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+button {
+    box-shadow: inset 0 -3px transparent;
+    border: none;
+    border-radius: 0;
+}
+
+/* ─── Workspaces ─── */
+#workspaces button {
+    padding: 0 10px;
+    margin: 4px 3px;
+    border-radius: 12px;
+    color: @subtext0;
+    font-size: 16px;
+    font-weight: 800;
+    transition: all 220ms ease;
+}
+
+#workspaces button:hover {
+    color: @blue;
+    background: alpha(@blue, 0.15);
+    box-shadow: inherit;
+    text-shadow: inherit;
+}
+
+#workspaces button.empty {
+    color: @surface0;
+}
+
+#workspaces button.active {
+    background: @mauve;
+    color: @crust;
+    box-shadow: 0 0 12px alpha(@mauve, 0.6);
+}
+
+#workspaces button.urgent {
+    color: @red;
+    background: alpha(@red, 0.15);
+}
+
+/* ─── Common module styling ─── */
+#clock,
+#battery,
+#cpu,
+#memory,
+#temperature,
+#backlight,
+#network,
+#wireplumber,
+#custom-power,
+#custom-separator,
+#custom-separator2,
+#custom-gpu,
+#tray,
+#mpris {
+    padding: 0 8px;
+    color: @text;
+    border-radius: 10px;
+    margin: 5px 1px;
+    transition: all 300ms ease;
+}
+
+#pulseaudio {
+    padding: 0 10px;
+    color: @text;
+    border-radius: 10px;
+    margin: 5px 1px;
+    transition: all 300ms ease;
+}
+
+#window,
+#workspaces {
+    margin: 0 4px;
+}
+
+.modules-left > widget:first-child > #workspaces {
+    margin-left: 2px;
+}
+
+/* ─── Clock ─── */
+#clock {
+    color: @text;
+}
+
+#clock:hover {
+    color: @rosewater;
+    background: alpha(@rosewater, 0.1);
+}
+
+/* ─── Launcher ─── */
+#custom-launcher {
+    color: @blue;
+    font-size: 20px;
+    padding: 0 12px;
+    margin: 4px 2px;
+    transition: all 300ms ease;
+}
+
+#custom-launcher:hover {
+    color: @sapphire;
+    background: alpha(@blue, 0.15);
+    border-radius: 10px;
+}
+
+/* ─── App launchers ─── */
+#custom-browser,
+#custom-files,
+#custom-terminal,
+#custom-code {
+    color: @overlay1;
+    padding: 0 7px;
+    margin: 5px 1px;
+    font-size: 16px;
+    border-radius: 8px;
+    transition: all 300ms ease;
+}
+
+#custom-browser:hover {
+    color: @peach;
+    background: alpha(@peach, 0.12);
+}
+
+#custom-files:hover {
+    color: @yellow;
+    background: alpha(@yellow, 0.12);
+}
+
+#custom-terminal:hover {
+    color: @green;
+    background: alpha(@green, 0.12);
+}
+
+#custom-code:hover {
+    color: @blue;
+    background: alpha(@blue, 0.12);
+}
+
+/* ─── Separators ─── */
+#custom-separator,
+#custom-separator2 {
+    color: @surface1;
+    padding: 0 2px;
+    font-size: 12px;
+}
+
+/* ─── Media ─── */
+#mpris {
+    color: @green;
+    font-style: italic;
+}
+
+#mpris:hover {
+    background: alpha(@green, 0.1);
+}
+
+#mpris.paused {
+    color: @overlay1;
+}
+
+/* ─── GPU ─── */
+#custom-gpu {
+    color: @green;
+}
+
+#custom-gpu:hover {
+    background: alpha(@green, 0.1);
+}
+
+/* ─── System stats ─── */
+#cpu {
+    color: @sky;
+}
+
+#cpu:hover {
+    background: alpha(@sky, 0.1);
+}
+
+#memory {
+    color: @sapphire;
+}
+
+#memory:hover {
+    background: alpha(@sapphire, 0.1);
+}
+
+#temperature {
+    color: @teal;
+}
+
+#temperature:hover {
+    background: alpha(@teal, 0.1);
+}
+
+#temperature.critical {
+    color: @red;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+#backlight {
+    color: @yellow;
+}
+
+#backlight:hover {
+    background: alpha(@yellow, 0.1);
+}
+
+/* ─── Audio ─── */
+#pulseaudio {
+    color: @mauve;
+}
+
+#pulseaudio:hover {
+    background: alpha(@mauve, 0.1);
+}
+
+#pulseaudio.muted {
+    color: @surface2;
+}
+
+/* ─── Network ─── */
+#network {
+    color: @blue;
+}
+
+#network:hover {
+    background: alpha(@blue, 0.1);
+}
+
+#network.disconnected {
+    color: @surface2;
+}
+
+/* ─── Battery ─── */
+#battery {
+    color: @green;
+}
+
+#battery:hover {
+    background: alpha(@green, 0.1);
+}
+
+#battery.good {
+    color: @green;
+}
+
+#battery.warning:not(.charging) {
+    color: @yellow;
+}
+
+#battery.critical:not(.charging) {
+    color: @red;
+    animation: blink 1s linear infinite;
+}
+
+/* ─── Bluetooth ─── */
+#bluetooth {
+    margin: 5px 1px;
+    padding: 0 8px;
+    font-size: 16px;
+    color: @lavender;
+    border-radius: 10px;
+    transition: all 300ms ease;
+}
+
+#bluetooth:hover {
+    background: alpha(@lavender, 0.12);
+}
+
+#bluetooth.disabled {
+    color: @surface2;
+}
+
+#bluetooth.connected {
+    color: @blue;
+}
+
+/* ─── Power ─── */
+#custom-power {
+    color: @maroon;
+    padding: 0 12px;
+    border-radius: 10px;
+    transition: all 300ms ease;
+}
+
+#custom-power:hover {
+    color: @red;
+    background: alpha(@red, 0.15);
+}
+
+/* ─── Tray ─── */
+#tray {
+    padding: 0 6px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+}
+
+/* ─── Animations ─── */
+@keyframes blink {
+    to {
+        color: @crust;
+    }
+}
+
+@keyframes pulse {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0.6;
+    }
+}
+
+/* ─── Module groups ─── */
+.modules-left {
+    background-color: alpha(@crust, 0.35);
+    border-radius: 12px;
+    padding: 0 4px;
+    margin: 5px 0 0 10px;
+    border: 1px solid alpha(@surface0, 0.5);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.45),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.modules-center {
+    background-color: alpha(@crust, 0.35);
+    border-radius: 12px;
+    padding: 0 14px;
+    margin-top: 5px;
+    border: 2px solid @mauve;
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.45),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.modules-right {
+    background-color: alpha(@crust, 0.32);
+    border-radius: 12px;
+    padding: 0 4px;
+    margin: 5px 10px 0 0;
+    border: 1px solid alpha(@surface0, 0.45);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.45),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+/* ─── Tooltip ─── */
+tooltip {
+    background-color: alpha(@crust, 0.35);
+    border: 1px solid @surface1;
+    border-radius: 10px;
+    color: @text;
+}
+
+tooltip label {
+    color: @text;
+    padding: 6px;
+}

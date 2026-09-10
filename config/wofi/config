@@ -1,0 +1,17 @@
+show=drun
+width=580
+height=420
+location=center
+prompt=Search applications…
+allow_images=true
+image_size=28
+insensitive=true
+term=kitty
+gtk_dark=true
+normal_window=false
+layer=overlay
+matching=fuzzy
+sort_order=default
+show_all=false
+hide_scroll=true
+print_command=false
