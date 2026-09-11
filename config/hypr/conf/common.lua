@@ -5,7 +5,7 @@ if not config or config == "" then
 end
 M.root = config .. "/hypr"
 M.terminal = "kitty"
-M.files = "thunar"
+M.files = "nautilus"
 M.mod = "SUPER"
 
 function M.quote(value)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Review, install, and roll back Midnight Glass for Hyprland 0.56+ (Lua)."""
 import argparse
+import configparser
 import contextlib
 import datetime
 import hashlib
@@ -12,6 +13,8 @@ import shutil
 import subprocess
 import sys
 import tempfile
+
+import desktop_setup
 
 ROOT = Path(__file__).resolve().parent
 PRESERVE = {"hypr/local.lua"}
@@ -62,10 +65,16 @@ def command_output(*args):
     return p.returncode, p.stdout.strip()
 
 
+def check_target(target):
+    if target != Path.home() / ".config":
+        raise RuntimeError("This kit uses ~/.config paths. A custom XDG_CONFIG_HOME needs the paths adapted first.")
+    for relative in [*paths(), *(Path(name) for name in desktop_setup.GENERATED_FILES)]:
+        check_destination(target, relative)
+
+
 def preflight(target):
     errors = []
-    if target != Path.home() / ".config":
-        errors.append("This kit uses ~/.config paths. A custom XDG_CONFIG_HOME needs the paths adapted first.")
+    check_target(target)
     legacy_personal = target / "hypr/local.conf"
     if legacy_personal.is_file() and not (target / "hypr/local.lua").exists():
         active_lines = [line for line in legacy_personal.read_text().splitlines()
@@ -81,23 +90,14 @@ def preflight(target):
         match = re.search(r"Hyprland\s+v?(\d+)\.(\d+)", version, re.I)
         if not match or (int(match[1]), int(match[2])) < (0, 56):
             errors.append("This Lua edition requires Hyprland 0.56 or newer. Upgrade the complete Arch system with `sudo pacman -Syu hyprland` first.")
-    required = {
-        "hyprctl": "hyprland", "waybar": "waybar", "wofi": "wofi",
-        "swaync": "swaync", "swaync-client": "swaync", "hyprlock": "hyprlock",
-        "hypridle": "hypridle", "swaybg": "swaybg", "kitty": "kitty",
-        "wl-copy": "wl-clipboard", "wl-paste": "wl-clipboard", "cliphist": "cliphist",
-        "grim": "grim", "slurp": "slurp", "notify-send": "libnotify",
-        "wpctl": "wireplumber", "playerctl": "playerctl", "brightnessctl": "brightnessctl",
-        "nmtui": "networkmanager", "thunar": "thunar", "blueman-manager": "blueman",
-        "pgrep": "procps-ng", "pkill": "procps-ng", "pidof": "procps-ng",
-    }
-    missing = sorted({package for cmd, package in required.items() if not shutil.which(cmd)})
+    missing = desktop_setup.missing_packages()
     if missing:
-        errors.append("Missing packages providing configured commands: " + " ".join(missing))
-    if not any(shutil.which(app) for app in ("pavucontrol", "pwvucontrol")):
-        errors.append("Install an audio mixer: pavucontrol or pwvucontrol.")
-    if not any(shutil.which(app) for app in ("firefox-developer-edition", "firefox")):
-        errors.append("Install firefox-developer-edition or firefox, or adapt the browser action.")
+        errors.append("Missing or outdated dependencies: " + " ".join(missing))
+    audio = desktop_setup.audio_installation()
+    if not audio:
+        errors.append("pwvucontrol is missing (native executable or user/system Flatpak). --apply installs the user Flatpak.")
+    else:
+        print("Audio mixer: pwvucontrol", audio)
     for cmd in ("waybar", "swaync", "hyprlock", "hypridle", "wofi"):
         if shutil.which(cmd):
             _, output = command_output(cmd, "--version")
@@ -108,15 +108,13 @@ def preflight(target):
             print(f"Font {family}: {matched}")
             if family.split()[0].lower() not in matched.replace(" ", "").lower():
                 errors.append(f"Font missing or substituted: {family}. See the font packages in README.md.")
-    for relative in paths():
-        check_destination(target, relative)
     for error in errors:
         print("CHECK:", error)
     return not errors
 
 
 @contextlib.contextmanager
-def staged_config(target):
+def staged_config(target, defaults=None):
     with tempfile.TemporaryDirectory(prefix="midnight-stage-") as folder:
         root = Path(folder)
         shutil.copytree(ROOT / "config", root / "config", ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
@@ -128,10 +126,12 @@ def staged_config(target):
             config["widget-config"]["backlight"]["device"] = fields[0]
             print("Backlight device:", fields[0])
         else:
-            config["widgets"].remove("backlight")
+            config["widgets"] = [widget for widget in config["widgets"] if widget != "backlight"]
             config["widget-config"].pop("backlight", None)
             print("No backlight device detected; the control-centre slider will be omitted.")
         config_path.write_text(json.dumps(config, ensure_ascii=False, indent=2) + "\n")
+        if defaults is not None:
+            desktop_setup.stage_defaults(target, root / "config", defaults)
         yield root
 
 
@@ -153,7 +153,7 @@ def verify_compositor(target, root):
         print("Hyprland accepted the staged configuration.")
 
 
-def install_tree(target, backup_root, root=ROOT):
+def install_tree(target, backup_root, root=ROOT, settings=None):
     files = paths(root)
     files = [p for p in files if not (p.as_posix() in PRESERVE and (target / p).exists())]
     for relative in files:
@@ -173,20 +173,39 @@ def install_tree(target, backup_root, root=ROOT):
         records.append({"path": relative.as_posix(), "existed": previous,
                         "installed_sha256": digest(root / "config" / relative)})
     manifest = {"target": str(target.absolute()), "files": records, "format": 1}
+    if settings is not None:
+        manifest["desktop"] = {
+            "before": desktop_setup.snapshot_settings(settings),
+            "installed": settings,
+        }
     (backup / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     attempted = []
+    settings_started = False
     try:
         for record in records:
             attempted.append(record)
             atomic_copy(root / "config" / record["path"], target / record["path"])
-    except BaseException:
+        if settings is not None:
+            settings_started = True
+            desktop_setup.apply_settings(settings)
+    except BaseException as failure:
         # Restore only files whose installation began; originals are still saved.
-        for record in reversed(attempted):
+        rollback_errors = []
+        for record in sorted(attempted, key=lambda r: r["path"] == "hypr/hyprland.lua"):
             destination = target / record["path"]
-            if record["existed"]:
-                atomic_copy(backup / "before" / record["path"], destination)
-            else:
-                destination.unlink(missing_ok=True)
+            try:
+                if record["existed"]:
+                    atomic_copy(backup / "before" / record["path"], destination)
+                else:
+                    destination.unlink(missing_ok=True)
+            except OSError as exc:
+                rollback_errors.append(f"{record['path']}: {exc}")
+        if settings_started:
+            rollback_errors.extend(desktop_setup.restore_settings(manifest["desktop"]["before"]))
+        print("Installation failed. Recovery backup:", backup, file=sys.stderr)
+        if rollback_errors:
+            raise RuntimeError(f"{failure}\nRollback needs attention: " + "; ".join(rollback_errors) +
+                               f"\nRetry: python3 install.py --restore {backup}") from failure
         raise
     return backup
 
@@ -197,6 +216,9 @@ def restore_tree(backup, expected_target):
     if target != expected_target.absolute() or manifest.get("format") != 1:
         raise RuntimeError("This backup belongs to another config directory or format.")
     records = manifest["files"]
+    desktop = manifest.get("desktop")
+    if desktop is not None:
+        desktop_setup.validate_snapshot(desktop["before"])
     changed = []
     for record in records:
         relative = Path(record["path"])
@@ -220,6 +242,14 @@ def restore_tree(backup, expected_target):
                 shutil.copy2(current, saved)
         (stash / "changed-paths.json").write_text(json.dumps([str(p) for p in changed], indent=2))
         print("Saved edits made since installation:", stash)
+    if desktop is not None:
+        # This also preserves later user preference edits before a manual rollback.
+        try:
+            current = desktop_setup.snapshot_settings(desktop["before"])
+            saved = backup / ("after-desktop-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S-%f") + ".json")
+            saved.write_text(json.dumps(current, indent=2) + "\n")
+        except (OSError, RuntimeError, subprocess.SubprocessError) as exc:
+            raise RuntimeError(f"Could not back up current desktop preferences; nothing restored: {exc}") from exc
     # Restore the main config last, after its dependencies have been restored.
     records = sorted(records, key=lambda r: r["path"] in {"hypr/hyprland.conf", "hypr/hyprland.lua"})
     for record in records:
@@ -228,42 +258,66 @@ def restore_tree(backup, expected_target):
             atomic_copy(backup / "before" / record["path"], destination)
         else:
             destination.unlink(missing_ok=True)
-    print("Restored config files. Log out and back in to restore session processes.")
+    if desktop is not None:
+        errors = desktop_setup.restore_settings(desktop["before"])
+        if errors:
+            raise RuntimeError("Config files restored, but some desktop preferences could not be restored. "
+                               "Run this restore command again in your graphical session. " + "; ".join(errors))
+    print("Restored config files and any saved desktop preferences. Log out and back in to restore session processes.")
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     group = parser.add_mutually_exclusive_group()
-    group.add_argument("--check", action="store_true", help="Show changes and check local compatibility (default)")
-    group.add_argument("--apply", action="store_true", help="Back up and install after local checks")
+    group.add_argument("--check", action="store_true", help="Check dependencies and staged config without changing the desktop (default)")
+    group.add_argument("--apply", action="store_true", help="Install missing dependencies, back up and install configs and app defaults")
     group.add_argument("--restore", type=Path, metavar="BACKUP", help="Restore an installation backup")
+    parser.add_argument("--skip-packages", action="store_true", help="With --apply, check dependencies but do not install packages or Flatpaks")
     args = parser.parse_args()
-    target = Path(os.environ.get("XDG_CONFIG_HOME", str(Path.home() / ".config"))).absolute()
+    if args.skip_packages and not args.apply:
+        parser.error("--skip-packages requires --apply")
+    if (args.apply or args.restore) and os.geteuid() == 0:
+        raise RuntimeError("Run as your desktop user, without sudo.")
+    target = Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config").absolute()
     if args.restore:
         restore_tree(args.restore.expanduser().absolute(), target)
         return
+    defaults = desktop_setup.load_defaults(ROOT / "config/hypr/app-defaults.json")
+    check_target(target)
     describe(target)
+    for name in desktop_setup.GENERATED_FILES:
+        print(f"MERGE   {target / name}")
+    for key, value in defaults["interface"].items():
+        print(f"SETTING {key}: {value}")
+    for kind, app in defaults["mime"].items():
+        print(f"DEFAULT {kind}: {app}")
+    if args.apply:
+        desktop_setup.require_session()
+        if not args.skip_packages:
+            desktop_setup.ensure_dependencies()
     valid = preflight(target)
     if not valid:
-        raise RuntimeError("No files changed. Resolve the checks above before applying.")
-    with staged_config(target) as root:
+        raise RuntimeError("No desktop configuration or preferences changed. "
+                           "Use python3 install.py --apply to install missing dependencies, or resolve the checks manually.")
+    settings = desktop_setup.supported_settings(defaults)
+    with staged_config(target, defaults) as root:
         verify_compositor(target, root)
         if not args.apply:
             print("Checks complete. To install: python3 install.py --apply")
             return
-        if os.geteuid() == 0:
-            raise RuntimeError("Run as your desktop user, without sudo.")
-        state = Path(os.environ.get("XDG_STATE_HOME", str(Path.home() / ".local/state")))
-        backup = install_tree(target, state / "midnight-glass/backups", root=root)
+        state = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local/state")
+        backup = install_tree(target, state / "midnight-glass/backups", root=root, settings=settings)
     print("Installed. Backup:", backup)
-    print("Next: log out and back in so Hyprland loads hyprland.lua; then run `hyprctl configerrors`.")
-    print("If your session command explicitly selects hyprland.conf, change it to hyprland.lua (or remove the custom --config flag).")
     print("Rollback: python3 install.py --restore", str(backup))
+    desktop_setup.verify_defaults(defaults)
+    print("Next: log out and back in to load the app theme, defaults and session helpers; then run `hyprctl configerrors`.")
+    print("If your session command explicitly selects hyprland.conf, change it to hyprland.lua (or remove the custom --config flag).")
+    print("Package installations/upgrades and the Flathub remote are retained on rollback.")
 
 
 if __name__ == "__main__":
     try:
         main()
-    except (OSError, ValueError, KeyError, RuntimeError, subprocess.SubprocessError) as exc:
+    except (OSError, ValueError, KeyError, RuntimeError, configparser.Error, subprocess.SubprocessError) as exc:
         print(str(exc), file=sys.stderr)
         sys.exit(1)

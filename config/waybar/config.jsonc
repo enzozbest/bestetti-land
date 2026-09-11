@@ -159,7 +159,8 @@
     "tooltip-format-wifi": "{essid} · {signalStrength}%\n{ipaddr}\n↑ {bandwidthUpBits}  ↓ {bandwidthDownBits}",
     "tooltip-format-ethernet": "Wired · {ipaddr}\n↑ {bandwidthUpBits}  ↓ {bandwidthDownBits}",
     "tooltip-format-disconnected": "Disconnected",
-    "on-click": "kitty --class midnight-tools -e nmtui",
+    "on-click": "networkmanager_dmenu",
+    "on-click-right": "nm-connection-editor",
     "max-length": 16
   },
   "battery": {

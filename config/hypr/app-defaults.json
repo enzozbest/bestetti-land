@@ -1,0 +1,19 @@
+{
+  "interface": {
+    "gtk-theme": "adw-gtk3-dark",
+    "color-scheme": "prefer-dark",
+    "icon-theme": "Papirus-Dark",
+    "font-name": "Inter 12",
+    "monospace-font-name": "JetBrainsMono Nerd Font 11",
+    "accent-color": "purple"
+  },
+  "mime": {
+    "inode/directory": "org.gnome.Nautilus.desktop",
+    "application/pdf": "org.gnome.Papers.desktop",
+    "image/jpeg": "org.gnome.Loupe.desktop",
+    "image/png": "org.gnome.Loupe.desktop",
+    "image/webp": "org.gnome.Loupe.desktop",
+    "image/gif": "org.gnome.Loupe.desktop",
+    "image/avif": "org.gnome.Loupe.desktop"
+  }
+}

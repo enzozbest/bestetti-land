@@ -13,7 +13,7 @@ hl.window_rule({
 -- New Lua rules use vectors for sizes. Expressions preserve monitor-relative sizing.
 hl.window_rule({
     name = "midnight-utilities",
-    match = { class = "^(pavucontrol|org.pulseaudio.pavucontrol|pwvucontrol|com.saivert.pwvucontrol|blueman-manager|midnight-tools)$" },
+    match = { class = "^(pavucontrol|org.pulseaudio.pavucontrol|pwvucontrol|com.saivert.pwvucontrol|blueman-manager|nm-connection-editor|midnight-tools)$" },
     float = true,
     center = true,
     size = { "monitor_w*0.48", "monitor_h*0.60" },

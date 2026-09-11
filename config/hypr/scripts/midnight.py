@@ -290,7 +290,7 @@ def tools_menu():
             raise RuntimeError("Install nvtop to use the GPU monitor.")
         launch("kitty", "--class", "midnight-tools", "-e", "nvtop")
     elif chosen == "Network":
-        launch("kitty", "--class", "midnight-tools", "-e", "nmtui")
+        launch("networkmanager_dmenu")
     elif chosen == "Audio":
         audio()
     elif chosen == "Bluetooth":
@@ -298,11 +298,19 @@ def tools_menu():
 
 
 def audio():
-    for app in ("pwvucontrol", "pavucontrol"):
-        if shutil.which(app):
-            launch(app)
-            return
-    raise RuntimeError("Install pavucontrol or pwvucontrol for the audio mixer.")
+    if shutil.which("pwvucontrol"):
+        launch("pwvucontrol")
+        return
+    if shutil.which("flatpak"):
+        for scope in ("--user", "--system"):
+            result = run("flatpak", "info", scope, "com.saivert.pwvucontrol", check=False)
+            if result.returncode == 0:
+                launch("flatpak", "run", scope, "com.saivert.pwvucontrol")
+                return
+    if shutil.which("pavucontrol"):
+        launch("pavucontrol")
+        return
+    raise RuntimeError("Install pwvucontrol (native or Flatpak), or pavucontrol for the audio mixer.")
 
 
 def help_menu():
